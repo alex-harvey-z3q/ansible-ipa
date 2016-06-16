@@ -1,0 +1,24 @@
+---
+- name: install > master install
+  shell: |
+    /usr/sbin/ipa-server-install \
+      --hostname={{ master }} \
+      --realm={{ realm }} \
+      --domain={{ domain }} \
+      --admin-password={{ admin_password }} \
+      --ds-password={{ ds_password }} \
+      --no-ntp \
+      --unattended
+    creates=/etc/ipa/default.conf
+
+  # Note that the install script takes a long
+  # time to run.  To monitor its progress:
+  #
+  # $ kitchen login master-centos-72
+  # $ tail -f /var/log/ipaserver-install.log
+
+- name: install > enablemkhomedir
+  shell: authconfig --enablemkhomedir --update
+
+- include: prepare_replica.yml
+  when: prepare_replica

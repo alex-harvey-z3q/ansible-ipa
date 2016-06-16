@@ -1,0 +1,33 @@
+$ORIGIN example.com.
+$TTL 1h
+@      IN SOA   ns1.example.com. hostmaster.example.com. (
+                  2016010101 ; serial
+                  1h         ; refresh
+                  15m        ; retry
+                  4w         ; expire
+                  1h         ; nxdomain ttl
+                )
+
+                      IN NS      ns1.example.com.
+
+; SRV and TXT records needed for IPA.
+_ldap._tcp            IN SRV 0 0 389  ipa1.example.com.
+                      IN SRV 0 0 389  ipa2.example.com.
+_kerberos             IN TXT          EXAMPLE.COM
+_kerberos._tcp        IN SRV 0 0 88   ipa1.example.com.
+                      IN SRV 0 0 88   ipa2.example.com.
+_kerberos._udp        IN SRV 0 0 88   ipa1.example.com.
+                      IN SRV 0 0 88   ipa2.example.com.
+_kerberos-master._tcp IN SRV 0 0 88   ipa1.example.com.
+                      IN SRV 0 0 88   ipa2.example.com.
+_kerberos-master._udp IN SRV 0 0 88   ipa1.example.com.
+                      IN SRV 0 0 88   ipa2.example.com.
+_kpasswd._tcp         IN SRV 0 0 464  ipa1.example.com.
+                      IN SRV 0 0 464  ipa2.example.com.
+_kpasswd._udp         IN SRV 0 0 464  ipa1.example.com.
+                      IN SRV 0 0 464  ipa2.example.com.
+
+ns1                   IN A       10.0.0.10
+ipa1                  IN A       10.0.0.11
+ipa2                  IN A       10.0.0.12
+client                IN A       10.0.0.13

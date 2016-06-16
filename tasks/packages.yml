@@ -1,0 +1,5 @@
+---
+- name: packages
+  yum:
+    name:  ipa-server
+    state: present

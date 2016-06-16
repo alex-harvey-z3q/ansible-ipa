@@ -1,0 +1,16 @@
+$ORIGIN 0.0.10.IN-ADDR.ARPA.
+$TTL 1h
+@      IN SOA   ns1.example.com. hostmaster.example.com. (
+                  2016010100 ; serial
+                  1h         ; refresh
+                  15m        ; retry
+                  4w         ; expire
+                  1h         ; nxdomain ttl
+                )
+
+       IN NS   ns1.example.com.
+
+10     IN PTR  ns1.example.com.
+11     IN PTR  ipa1.example.com.
+12     IN PTR  ipa2.example.com.
+13     IN PTR  client.example.com.

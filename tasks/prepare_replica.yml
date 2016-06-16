@@ -1,0 +1,22 @@
+---
+- name: prepare replica > ipa-replica-repare
+  shell: |
+    /usr/sbin/ipa-replica-prepare {{ replica }} \
+      --password={{ ds_password }}
+    creates="/var/lib/ipa/replica-info-{{ replica }}.gpg"
+
+- name: prepare replica > set up root keys > .ssh directory
+  file:
+    path=/root/.ssh
+    state=directory
+    mode=0700
+    owner=root
+    group=root
+
+- name: prepare replica > set up root keys > authorized_keys
+  copy:
+    src=replica_info_ssh_id_rsa.pub
+    dest=/root/.ssh/authorized_keys
+    mode=0400
+    owner=root
+    group=root

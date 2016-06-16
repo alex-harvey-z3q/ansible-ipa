@@ -1,0 +1,58 @@
+---
+driver:
+  name: vagrant
+
+platforms:
+  - name: centos-7.2
+    driver_plugin: vagrant
+    driver_config:
+      box: puppetlabs/centos-7.2-64-nocm
+
+provisioner:
+  name: ansible_playbook
+  hosts: test-kitchen
+  ansible_verbose: false
+  ansible_verbosity: 2
+  require_ansible_repo: false
+  require_ansible_omnibus: true
+  require_chef_for_busser: false
+  requirements_path: requirements.yml
+
+verifier:
+  name: serverspec
+  bundler_path: '/usr/local/bin'
+  rspec_path: '/usr/local/bin'
+
+suites:
+  - name: dns
+    verifier:
+      patterns:
+        - roles/ansible-ipa/test/integration/dns/serverspec/dns_spec.rb
+    driver_config:
+      network:
+        - ['private_network', {ip: '10.0.0.10'}]
+  - name: master
+    verifier:
+      patterns:
+        - roles/ansible-ipa/test/integration/master/serverspec/master_spec.rb
+    driver_config:
+      network:
+        - ['private_network', {ip: '10.0.0.11'}]
+        - ['forwarded_port', {guest: 443, host: 8443}]
+        - ['forwarded_port', {guest: 80,  host: 8080}]
+  - name: replica
+    verifier:
+      patterns:
+        - roles/ansible-ipa/test/integration/replica/serverspec/replica_spec.rb
+    driver_config:
+      network:
+        - ['private_network', {ip: '10.0.0.12'}]
+        - ['forwarded_port', {guest: 443, host: 8444}]
+        - ['forwarded_port', {guest: 80,  host: 8081}]
+  - name: client
+    verifier:
+      patterns:
+        - roles/ansible-ipa/test/integration/client/serverspec/client_spec.rb
+    driver_config:
+      network:
+        - ['private_network', {ip: '10.0.0.13'}]

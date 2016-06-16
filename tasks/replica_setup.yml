@@ -1,0 +1,36 @@
+---
+- name: replica setup > create .ssh
+  file:
+    path=/root/.ssh
+    state=directory
+    mode=0700
+    owner=root
+    group=root
+
+- name: replica setup > install temporary private key
+  copy:
+    src=replica_info_ssh_id_rsa
+    dest=/root/.ssh/id_rsa
+    mode=0600
+    owner=root
+    group=root
+
+- name: replica setup > get prepare info
+  shell: |
+    /bin/scp -o StrictHostKeyChecking=no \
+      root@{{ master }}:/var/lib/ipa/replica-info-{{ replica }}.gpg \
+      /var/lib/ipa/
+      
+- name: replica setup > remove temporary private key
+  file:
+    path=/root/.ssh/id_rsa
+    state=absent
+
+- name: replica setup > ipa-replica-install
+  shell: |
+    /usr/sbin/ipa-replica-install \
+      --password={{ ds_password }} \
+      --skip-conncheck \
+      --unattended \
+      /var/lib/ipa/replica-info-{{ replica }}.gpg
+    creates=/etc/ipa/default.conf

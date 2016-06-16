@@ -1,0 +1,40 @@
+---
+- hosts: test-kitchen
+
+  pre_tasks:
+    - yum:
+        name=vim
+        state=installed
+    - service:
+        name={{ item }}
+        state=stopped
+      with_items:
+        - firewalld
+        - NetworkManager
+
+  roles:
+
+  post_tasks:
+    - lineinfile:
+        dest=/etc/resolv.conf
+        line='nameserver 10.0.0.10'
+        regexp='.*'
+    - shell: |
+        hostname client.example.com
+    - yum:
+        name={{ item }}
+        state=installed
+      with_items:
+        - ipa-client
+        - openldap-clients
+    - shell: |
+        /usr/sbin/ipa-client-install \
+          -p admin \
+          -w admin123 \
+          --server=ipa1.example.com \
+          --hostname=client.example.com \
+          --domain=example.com \
+          --realm=EXAMPLE.COM \
+          --no-ntp \
+          --unattended
+        creates=/etc/ipa/default.conf

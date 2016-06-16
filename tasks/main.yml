@@ -1,0 +1,6 @@
+---
+- include: packages.yml
+- include: master_setup.yml
+  when:      ipa_role == 'master'
+- include: replica_setup.yml
+  when:      ipa_role == 'replica'

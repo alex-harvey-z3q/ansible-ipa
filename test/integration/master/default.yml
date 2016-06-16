@@ -1,0 +1,46 @@
+---
+- hosts: test-kitchen
+
+  pre_tasks:
+    - yum:
+        name=vim
+        state=installed
+    - service:
+        name={{ item }}
+        state=stopped
+      with_items:
+        - firewalld
+        - NetworkManager
+    - lineinfile:
+        dest=/etc/resolv.conf
+        line='nameserver 10.0.0.10'
+        regexp='.*'
+    - shell: |
+        hostname ipa1.example.com
+
+  roles:
+    - {
+        role:            ansible-ipa,
+        ipa_role:        master,
+        master:          ipa1.example.com,
+        prepare_replica: true,
+        replica:         ipa2.example.com,
+        domain:          example.com,
+        realm:           EXAMPLE.COM,
+        admin_password:  admin123,
+        ds_password:     dspass12,
+      }
+
+  post_tasks:
+    - shell: |
+        echo admin123 | kinit admin
+    - shell: |
+        /usr/bin/ipa user-add jsmith \
+          --first=John \
+          --last=Smith \
+          --email=johnls@example.com \
+          --homedir=/home/work/johns \
+          --random
+
+  environment:
+    no_proxy: example.com

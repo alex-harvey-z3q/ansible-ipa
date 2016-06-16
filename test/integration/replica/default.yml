@@ -1,0 +1,34 @@
+---
+- hosts: test-kitchen
+
+  pre_tasks:
+    - yum:
+        name=vim
+        state=installed
+    - service:
+        name={{ item }}
+        state=stopped
+      with_items:
+        - firewalld
+        - NetworkManager
+    - lineinfile:
+        dest=/etc/resolv.conf
+        line='nameserver 10.0.0.10'
+        regexp='.*'
+    - shell: |
+        hostname ipa2.example.com
+
+  roles:
+    - {
+        role:            ansible-ipa,
+        ipa_role:        replica,
+        master:          ipa1.example.com,
+        replica:         ipa2.example.com,
+        domain:          example.com,
+        realm:           EXAMPLE.COM,
+        admin_password:  admin123,
+        ds_password:     dspass12,
+      }
+
+  environment:
+    no_proxy: example.com

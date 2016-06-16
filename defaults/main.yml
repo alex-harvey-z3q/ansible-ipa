@@ -1,0 +1,3 @@
+---
+ipa_role: master
+prepare_replica: false

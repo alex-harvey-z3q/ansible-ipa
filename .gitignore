@@ -1,0 +1,4 @@
+.kitchen/
+.kitchen.local.yml
+Gemfile.lock
+update_proxy.sh
